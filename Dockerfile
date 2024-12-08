@@ -1,20 +1,24 @@
-# For running the django server
 FROM python:3.12-alpine
 
 # Install dependencies since we may use
-# libraries that need them at runtime like
-# numpy, scipy, etc.
+# libraries that need them at runtime like numpy, scipy, etc.
 RUN apk add --no-cache gcc musl-dev
 
-# Install python dependencies layer
-# Since dependecies change less frequently than the application code,
-# we can cache the dependencies layer to speed up the build process
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+COPY df_entrypoint.sh /app/df_entrypoint.sh
 
-# Copy the application code
-COPY . .
+RUN chmod +x /app/df_entrypoint.sh
 
-# Run the django server
+ENTRYPOINT ["/bin/sh", "/app/df_entrypoint.sh"]
+
+# Copy requirements.txt and install Python dependencies
+# This step is cached if requirements.txt doesn't change
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
+
+
+COPY . /app
+
+WORKDIR /app
+
+# Running the server
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-
