@@ -78,8 +78,12 @@ WSGI_APPLICATION = "pms.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv(Environment.POSTGRES_DB),
+        "USER": os.getenv(Environment.POSTGRES_USER),
+        "PASSWORD": os.getenv(Environment.POSTGRES_PASSWORD),
+        "HOST": os.getenv(Environment.POSTGRES_HOST),
+        "PORT": os.getenv(Environment.POSTGRES_PORT),
     }
 }
 
